@@ -15,7 +15,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/guionardo/go-dev-monitor/internal/api"
 	"github.com/guionardo/go-dev-monitor/internal/config"
-	"github.com/guionardo/go-dev-monitor/internal/debug"
+	"github.com/guionardo/go-dev-monitor/internal/logging"
 	"github.com/guionardo/go-dev-monitor/internal/store"
 )
 
@@ -51,11 +51,13 @@ func New() (*Server, error) {
 }
 
 func (s *Server) Run() {
-	if !debug.IsDebug() {
+	if !logging.IsDebug() {
 		gin.SetMode(gin.ReleaseMode)
 	}
+
 	router := gin.Default()
 	router.Use(cors.Default())
+	logging.SetupGin(router)
 
 	setupVueStatic(router)
 
@@ -69,24 +71,25 @@ func (s *Server) Run() {
 		Addr:    fmt.Sprintf(":%d", s.config.Port),
 		Handler: router.Handler(),
 	}
+	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	go func() {
 		// service connections
-		debug.Log().Info("Listening", slog.String("address", srv.Addr))
+		logging.Info("Listening", slog.String("address", srv.Addr))
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			debug.Log().Error("Failed to start listening", slog.String("address", srv.Addr), slog.Any("error", err))
+			logging.Error("Failed to start listening", err, slog.String("address", srv.Addr))
+			cancel()
 		}
 	}()
 
-	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer cancel()
 	<-ctx.Done()
-	debug.Log().Info("Finishing service...")
+	logging.Info("Finishing service...")
 
 	shutdownCtx, cancelShutdown := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancelShutdown()
 
-	srv.Shutdown(shutdownCtx)
-	debug.Log().Info("Finished.")
+	err := srv.Shutdown(shutdownCtx)
+	logging.Info("Finished.", slog.Any("error", err))
 }
 
 func (s *Server) GetData(c *gin.Context) {
@@ -126,9 +129,12 @@ func (s *Server) PostData(c *gin.Context) {
 				s.store.BeginPosts(requestData.Hostname)
 				for _, repo := range requestData.Repositories {
 					if err = s.store.Post(requestData.Hostname, repo); err != nil {
+						logging.Warn("Saving", slog.String("origin", repo.Origin), slog.Any("error", err))
 						break
 					}
+					logging.Info("Saving", slog.String("origin", repo.Origin), slog.String("hostname", requestData.Hostname))
 				}
+				logging.Info("Saved", slog.Int("repos", len(requestData.Repositories)), slog.String("hostname", requestData.Hostname))
 			}
 		}
 	}

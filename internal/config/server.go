@@ -6,7 +6,7 @@ type Server struct {
 	StoreFolder string `yaml:"store_folder"`
 }
 
-func (c *Server) Reset() {
+func (c *Server) Reset() *Server {
 	if c.Port <= 0 {
 		c.Port = 3800
 	}
@@ -14,6 +14,11 @@ func (c *Server) Reset() {
 		c.QueueSize = 100
 	}
 	if len(c.StoreFolder) == 0 {
-
+		cfgDir, err := tryGetConfigDir()
+		if err == nil {
+			c.StoreFolder = cfgDir
+		}
 	}
+
+	return c
 }

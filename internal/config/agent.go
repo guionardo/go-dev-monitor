@@ -1,6 +1,14 @@
 package config
 
-import "os"
+import (
+	"fmt"
+	"net/url"
+	"os"
+	"path/filepath"
+	"slices"
+
+	pathtools "github.com/guionardo/go-dev-monitor/internal/utils/path_tools"
+)
 
 type Agent struct {
 	Roots         []string `yaml:"roots"`
@@ -32,4 +40,44 @@ func (c *Agent) Reset() *Agent {
 		}
 	}
 	return c
+}
+
+func (c *Agent) AddRoot(root string) error {
+	if !pathtools.DirExists(root) {
+		return fmt.Errorf("root not found %s", root)
+	}
+	absRoot, err := filepath.Abs(root)
+	if err != nil {
+		return fmt.Errorf("failed getting absolute path of %s - %w", root, err)
+	}
+	if !slices.Contains(c.Roots, absRoot) {
+		c.Roots = append(c.Roots, absRoot)
+	}
+	return nil
+}
+
+func (c *Agent) RemoveRoot(root string) error {
+	absRoot, err := filepath.Abs(root)
+	if err != nil {
+		return fmt.Errorf("failed getting absolute path of %s - %w", root, err)
+	}
+	if p := slices.Index(c.Roots, absRoot); p >= 0 {
+		c.Roots = append(c.Roots[0:p], c.Roots[p+1:]...)
+	}
+	return nil
+}
+
+func (c *Agent) SetServer(server string) error {
+	url, err := url.Parse(server)
+	if err != nil {
+		return fmt.Errorf("failed setting server URI %s - %w", server, err)
+	}
+	if len(url.Scheme) == 0 {
+		url.Scheme = "https"
+	}
+	if len(url.Host) == 0 {
+		return fmt.Errorf("failed setting server URI %s - missing host", server)
+	}
+	c.ServerAddress = url.String()
+	return nil
 }

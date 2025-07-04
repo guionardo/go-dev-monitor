@@ -12,7 +12,7 @@ import (
 	"github.com/fatih/color"
 	"github.com/guionardo/go-dev-monitor/internal/api"
 	"github.com/guionardo/go-dev-monitor/internal/config"
-	"github.com/guionardo/go-dev-monitor/internal/debug"
+	"github.com/guionardo/go-dev-monitor/internal/logging"
 	"github.com/guionardo/go-dev-monitor/internal/repository"
 	"github.com/guionardo/go-dev-monitor/internal/utils/git"
 )
@@ -53,7 +53,7 @@ func display(cfg *config.Agent, localFolder string) error {
 	if err := m.fetchRemotes(); err != nil {
 		return err
 	}
-	debug.Log().Debug("display", slog.Any("result", m))
+	logging.Debug("display", slog.Any("result", m))
 
 	return nil
 }

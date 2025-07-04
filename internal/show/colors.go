@@ -35,14 +35,14 @@ var colorFuncs = map[Color]func(format string, args ...any) string{
 	// link:           consoleLink,
 }
 
-func consoleLink(format string, args ...any) string {
-	//\e]8;;http://example.com\e\\This is a link\e]8;;\e\\\n
-	// https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
-	const startURI = "\x1b]8;;"
-	const endURI = "\x1b"
-	format = fmt.Sprintf("%s%s%s", startURI, format, endURI)
-	return fmt.Sprintf(format, args...)
-}
+// func consoleLink(format string, args ...any) string {
+// 	//\e]8;;http://example.com\e\\This is a link\e]8;;\e\\\n
+// 	// https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
+// 	const startURI = "\x1b]8;;"
+// 	const endURI = "\x1b"
+// 	format = fmt.Sprintf("%s%s%s", startURI, format, endURI)
+// 	return fmt.Sprintf(format, args...)
+// }
 
 func (c Color) String() string {
 	return fmt.Sprintf("{COLOR:%d}", c)

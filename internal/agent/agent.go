@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"iter"
 	"net/http"
-	"os"
 
 	"github.com/guionardo/go-dev-monitor/internal/api"
 	"github.com/guionardo/go-dev-monitor/internal/config"
@@ -17,14 +16,11 @@ import (
 )
 
 type Agent struct {
-	config *config.BaseConfig[*ConfigData]
+	config *config.Config
 }
 
 func New() (*Agent, error) {
-	cfg, err := config.New(&ConfigData{})
-	if err != nil {
-		return nil, err
-	}
+	cfg := config.NewConfig()
 
 	return &Agent{
 		config: cfg,
@@ -36,27 +32,22 @@ func (a *Agent) SaveConfigFile() error {
 }
 
 func (a *Agent) GetRoots() []string {
-	return a.config.Data().Roots
+	return a.config.Agent.Roots
 }
 
 func (a *Agent) AddRoot(pathName string) error {
-	if stat, err := os.Stat(pathName); err == nil && stat.IsDir() {
-		a.config.Data().AddRoots(pathName)
-		return nil
-	}
-	return fmt.Errorf("invalid root %s", pathName)
+	return a.config.Agent.AddRoot(pathName)
 }
 
 func (a *Agent) RemoveRoot(pathName string) error {
-	a.config.Data().RemoveRoot(pathName)
-	return nil
+	return a.config.Agent.RemoveRoot(pathName)
 }
 
 func (a *Agent) ProduceData() iter.Seq[*repository.Local] {
 	return func(yield func(*repository.Local) bool) {
-		for _, root := range a.config.Data().GetRoots() {
-			for folder := range finder.FindRepositories(root, a.config.Data().MaxFolderDept) {
-				if repo, err := repository.New(folder, a.config.Data().Hostname); err == nil {
+		for _, root := range a.config.Agent.Roots {
+			for folder := range finder.FindRepositories(root, a.config.Agent.MaxFolderDept) {
+				if repo, err := repository.New(folder, a.config.Agent.Hostname); err == nil {
 					if !yield(repo) {
 						return
 					}
@@ -67,7 +58,7 @@ func (a *Agent) ProduceData() iter.Seq[*repository.Local] {
 }
 
 func (a *Agent) PublishData(data []*repository.Local) error {
-	cfg := a.config.Data()
+	cfg := a.config.Agent
 	requestData := api.AgentRequest{
 		Hostname:     cfg.Hostname,
 		Repositories: data,

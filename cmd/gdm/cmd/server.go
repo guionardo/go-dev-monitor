@@ -11,13 +11,14 @@ import (
 
 var (
 	serverCmd = &cobra.Command{
-		Use:  "run",
-		RunE: runServer,
+		Use:   "serve",
+		Short: "Run http server for API",
+		RunE:  runServer,
 	}
 )
 
 func init() {
-	
+
 	serverCmd.Flags().Bool("debug", false, "enable debugging messages")
 	serverCmd.Flags().String("data", "", "data folder (default is ~/.config/go_dev_monitor)")
 }

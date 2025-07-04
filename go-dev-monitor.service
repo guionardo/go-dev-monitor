@@ -1,9 +1,8 @@
 [Unit]
 Description=go-dev-monitor service
 After=network-online.target
-
 [Service]
-ExecStart=/path/to/hit.sh
-
+Environment=HOME=/home/guionardo
+ExecStart=/home/guionardo/go/bin/gdm serve
 [Install]
 WantedBy=multi-user.target

@@ -5,7 +5,7 @@ import (
 	"os"
 	"path"
 
-	"github.com/guionardo/go-dev-monitor/internal/debug"
+	"github.com/guionardo/go-dev-monitor/internal/logging"
 	"gopkg.in/yaml.v3"
 )
 
@@ -17,7 +17,7 @@ type Config struct {
 
 func NewConfig() *Config {
 	configFile := path.Join(getConfigDir(), "config.yaml")
-	logger := debug.Log().With(slog.String("filename", configFile))
+	logger := logging.With(slog.String("filename", configFile))
 
 	content, err := os.ReadFile(configFile)
 	cfg := &Config{configFile: configFile}
@@ -29,19 +29,23 @@ func NewConfig() *Config {
 	} else {
 		logger.Warn("config file", slog.Any("error", err))
 	}
+	if cfg.Agent == nil {
+		cfg.Agent = NewAgentConfig()
+	}
+	if cfg.Server == nil {
+		cfg.Server = (&Server{}).Reset()
+	}
 	return cfg
 }
 
 func (cfg *Config) Save() error {
-	logger := debug.Log().With(slog.String("filename", cfg.configFile))
+	logger := logging.With(slog.String("filename", cfg.configFile))
 	content, err := yaml.Marshal(cfg)
 	if err == nil {
 		err = os.WriteFile(cfg.configFile, content, 0644)
 	}
 	if err == nil {
 		logger.Debug("saved config")
-	} else {
-		logger.Error("saving config", slog.Any("error", err))
 	}
 	return err
 }

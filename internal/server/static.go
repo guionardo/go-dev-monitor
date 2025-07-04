@@ -22,7 +22,9 @@ func (e embedFileSystem) Exists(prefix string, path string) bool {
 	if err != nil {
 		return false
 	}
-	defer f.Close()
+	defer func() {
+		_ = f.Close()
+	}()
 	return true
 }
 

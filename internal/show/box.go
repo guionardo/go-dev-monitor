@@ -73,7 +73,7 @@ func padL(s, prefix, suffix, char string, width int, w io.Writer) {
 		s = " " + s + " "
 	}
 	// pad := ""
-	fmt.Fprintf(w, "%s%s\n", prefix, s)
+	_, _ = fmt.Fprintf(w, "%s%s\n", prefix, s)
 	// if l < width-2 {
 	// 	pad = strings.Repeat(char, width-2-l)
 	// }

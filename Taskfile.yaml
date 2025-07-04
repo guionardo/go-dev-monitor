@@ -1,0 +1,16 @@
+version: "3"
+
+tasks:
+  setup-dev:
+    cmds:
+      # - node --version
+      # - npm install -g npm@latest
+      # - npm install -g @commitlint/cli @commitlint/config-conventional
+      - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v2.2.1
+
+
+
+  cover:
+    cmds:
+      - go test -coverprofile=${TMPDIR}/c.out ./...
+      - go tool cover -html="${TMPDIR}/c.out"

@@ -2,9 +2,8 @@ package store
 
 import (
 	"context"
-	"log/slog"
 
-	"github.com/guionardo/go-dev-monitor/internal/debug"
+	"github.com/guionardo/go-dev-monitor/internal/logging"
 	"github.com/guionardo/go-dev-monitor/internal/repository"
 )
 
@@ -26,7 +25,7 @@ type (
 
 func (ds *DataStore) BeginPosts(hostname string) {
 	if err := ds.store.BeginPosts(hostname); err != nil {
-		debug.Log().Error("DataStore.BeginPosts", slog.Any("error", err))
+		logging.Error("DataStore.BeginPosts", err)
 	}
 
 }
@@ -45,7 +44,9 @@ func New(queueSize int, storeFolder string) (*DataStore, error) {
 }
 
 func (ds *DataStore) Post(hostName string, repositoryData *repository.Local) error {
-	go ds.store.Post(hostName, repositoryData)
+	go func() {
+		_ = ds.store.Post(hostName, repositoryData)
+	}()
 	return nil
 }
 
@@ -60,7 +61,7 @@ func (ds *DataStore) Run(ctx context.Context) {
 			case <-ctx.Done():
 				return
 			case data := <-ds.dataChan:
-				ds.store.Post(data.hostname, data.repository)
+				_ = ds.store.Post(data.hostname, data.repository)
 			}
 		}
 	}()

@@ -2,6 +2,7 @@ package show
 
 import (
 	"github.com/guionardo/go-dev-monitor/internal/config"
+	"github.com/guionardo/go-dev-monitor/internal/logging"
 )
 
 func Show(localFolder string) error {
@@ -10,7 +11,9 @@ func Show(localFolder string) error {
 	if agentCfg == nil {
 		agentCfg = config.NewAgentConfig()
 		mainCfg.Agent = agentCfg
-		mainCfg.Save()
+		if err := mainCfg.Save(); err != nil {
+			logging.Error("saving config", err)
+		}
 	}
 	agentCfg.Reset()
 

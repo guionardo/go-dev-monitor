@@ -36,7 +36,7 @@ func tryGetConfigDir() (string, error) {
 	if err := os.WriteFile(path.Join(cfgDir, "_write_test"), []byte{}, 0644); err != nil {
 		return "", fmt.Errorf("couldn't write to config dir: %s - %w", cfgDir, err)
 	}
-	os.Remove(path.Join(cfgDir, "_write_test"))
+	_ = os.Remove(path.Join(cfgDir, "_write_test"))
 
 	return cfgDir, nil
 }

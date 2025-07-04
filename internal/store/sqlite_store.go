@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/guionardo/go-dev-monitor/internal/debug"
+	"github.com/guionardo/go-dev-monitor/internal/logging"
 	"github.com/guionardo/go-dev-monitor/internal/repository"
 	"zombiezen.com/go/sqlite"
 	"zombiezen.com/go/sqlite/sqlitemigration"
@@ -17,14 +17,13 @@ import (
 
 type SqliteStore struct {
 	dbFile string
-	conn   *sqlite.Conn
 	pool   *sqlitex.Pool
 	lock   sync.RWMutex
 }
 
 func NewSqliteStore(storeFolder string) (*SqliteStore, error) {
 	dataFile := path.Join(storeFolder, "db.sqlite")
-	debug.Log().Debug("sqlite_store", slog.String("data_file", dataFile))
+	logging.Debug("sqlite_store", slog.String("data_file", dataFile))
 	if err := applyMigration(dataFile); err != nil {
 		return nil, err
 	}
@@ -89,7 +88,9 @@ func (s *SqliteStore) GetSummary() (map[string][]*repository.Local, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer conn.Close()
+	defer func() {
+		_ = conn.Close()
+	}()
 	summary := make(map[string][]*repository.Local)
 	stmt := conn.Prep("SELECT origin,updated_at,hostname,data FROM repos ORDER BY origin")
 	for {
@@ -149,8 +150,9 @@ func applyMigration(dbFile string) error {
 	if err != nil {
 		return err
 	}
-	defer os.RemoveAll(dir)
-
+	defer func() {
+		_ = os.RemoveAll(dir)
+	}()
 	// Open a pool. This does not block, and will start running any migrations
 	// asynchronously.
 	pool := sqlitemigration.NewPool(dbFile, schema, sqlitemigration.Options{
@@ -160,15 +162,17 @@ func applyMigration(dbFile string) error {
 			return sqlitex.ExecuteTransient(conn, "PRAGMA foreign_keys = ON;", nil)
 		},
 		OnError: func(e error) {
-			debug.Log().Error("migration", slog.Any("error", e))
+			logging.Error("migration", e)
 		},
 	})
-	defer pool.Close()
-
+	defer func() {
+		_ = pool.Close()
+	}()
 	// Get a connection. This blocks until the migration completes.
 	conn, err := pool.Get(context.TODO())
 	if err != nil {
 		// handle error
+		return err
 	}
 	defer pool.Put(conn)
 
@@ -177,7 +181,7 @@ func applyMigration(dbFile string) error {
 
 	err = sqlitex.ExecuteTransient(conn, listSchemaQuery, &sqlitex.ExecOptions{
 		ResultFunc: func(stmt *sqlite.Stmt) error {
-			debug.Log().Debug("store",
+			logging.Debug("store",
 				slog.String("type", stmt.ColumnText(0)),
 				slog.String("name", stmt.ColumnText(1)))
 			return nil
