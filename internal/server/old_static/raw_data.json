@@ -1,0 +1,111 @@
+{
+    "origins": {
+        "git@github.com:escoteirando/escoteirando-atividades.git": [
+            {
+                "host_name": "",
+                "folder_name": "/home/guionardo/dev/escoteirando-atividades",
+                "current_branch": "main",
+                "clean": false,
+                "last_commit": {
+                    "when": "2025-06-05T21:08:42-03:00",
+                    "message": "Initial commit",
+                    "author": "Guionardo Furlan",
+                    "author_email": "guionardo@gmail.com"
+                },
+                "untracked_files": [
+                    {
+                        "name": "docs/2025-06-14.pdf",
+                        "time": "2025-06-13T22:10:32.526062308-03:00",
+                        "status": "?"
+                    },
+                    {
+                        "name": "docs/atv.pdf",
+                        "time": "2025-06-06T23:09:31.728953989-03:00",
+                        "status": "?"
+                    }
+                ],
+                "changed_files": [
+                    {
+                        "name": "atividades/migrations/0001_initial.py",
+                        "time": "2025-06-06T01:52:50.929071334-03:00",
+                        "status": "A"
+                    },
+                    {
+                        "name": "atividades/migrations/0004_alter_activity_activity_type.py",
+                        "time": "2025-06-06T01:55:37.979243396-03:00",
+                        "status": "A"
+                    }
+                ],
+                "last_changed_files": [
+                    {
+                        "name": "docs/2025-06-14.pdf",
+                        "time": "2025-06-13T22:10:32.526062308-03:00",
+                        "status": "?"
+                    },
+                    {
+                        "name": "docs/2025-06-14.md",
+                        "time": "2025-06-13T22:10:15.093929514-03:00",
+                        "status": "?"
+                    }
+                ]
+            }
+        ],
+        "git@github.com:guionardo/go-dev-monitor.git": [
+            {
+                "host_name": "",
+                "folder_name": "/home/guionardo/dev/go-dev-monitor",
+                "current_branch": "main",
+                "clean": false,
+                "last_commit": {
+                    "when": "2025-06-15T09:50:11-03:00",
+                    "message": "Initial commit",
+                    "author": "Guionardo Furlan",
+                    "author_email": "guionardo@gmail.com"
+                },
+                "untracked_files": [
+                    {
+                        "name": "internal/agent/config_test.go",
+                        "time": "2025-06-19T22:01:47.226954798-03:00",
+                        "status": "?"
+                    },
+                    {
+                        "name": "pkg/git/repository_test.go",
+                        "time": "2025-06-15T12:31:36.854321267-03:00",
+                        "status": "?"
+                    }
+                ],
+                "changed_files": [
+                    {
+                        "name": "go.mod",
+                        "time": "2025-06-20T15:04:33.593848449-03:00",
+                        "status": "A"
+                    }
+                ],
+                "last_changed_files": [
+                    {
+                        "name": "cmd/agent/__debug_bin4272830015",
+                        "time": "2025-06-20T15:26:56.054273473-03:00",
+                        "status": "?"
+                    }
+                ]
+            }
+        ],
+        "https://github.com/linka-cloud/d2vm": [
+            {
+                "host_name": "",
+                "folder_name": "/home/guionardo/dev/lab/d2vm",
+                "current_branch": "main",
+                "clean": true,
+                "last_commit": {
+                    "when": "2024-08-23T14:57:10+02:00",
+                    "message": "add ubuntu 16.04 support",
+                    "author": "Adphi",
+                    "author_email": "philippe.adrien.nousse@gmail.com"
+                },
+                "untracked_files": [],
+                "changed_files": [],
+                "last_changed_files": []
+            }
+        ]
+    }
+}

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git Repository Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="header-title">
+                    <i class="fab fa-git-alt"></i>
+                    <h1>Git Repository Dashboard</h1>
+                </div>
+                <div class="header-controls">
+                    <button id="refreshBtn" class="btn btn-primary">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh Data
+                    </button>
+                    <div class="search-container">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search repositories...">
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-code-branch"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalRepos">0</h3>
+                        <p>Total Repositories</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="dirtyRepos">0</h3>
+                        <p>Dirty Repositories</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="untrackedFiles">0</h3>
+                        <p>Untracked Files</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="changedFiles">0</h3>
+                        <p>Changed Files</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-bar">
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">All Repositories</button>
+                    <button class="filter-btn" data-filter="dirty">Dirty Only</button>
+                    <button class="filter-btn" data-filter="clean">Clean Only</button>
+                </div>
+                <select id="sortSelect" class="sort-select">
+                    <option value="name">Sort by Name</option>
+                    <option value="lastCommit">Sort by Last Commit</option>
+                    <option value="status">Sort by Status</option>
+                    <option value="changes">Sort by Changes</option>
+                </select>
+            </div>
+
+            <div id="repositoriesContainer" class="repositories-container">
+                <!-- Repository cards will be dynamically generated here -->
+            </div>
+        </main>
+
+        <div id="loadingSpinner" class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Loading repository data...</p>
+        </div>
+
+        <div id="errorMessage" class="error-message" style="display: none;">
+            <i class="fas fa-exclamation-circle"></i>
+            <p>Failed to load repository data. Please try again.</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
