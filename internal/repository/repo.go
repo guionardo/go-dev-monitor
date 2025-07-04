@@ -122,6 +122,11 @@ func New(folderName string, hostName string) (repo *Local, err error) {
 	)
 	for fileName, status := range st {
 		fs, err := os.Stat(path.Join(folderName, fileName))
+		if os.IsNotExist(err) {
+			fi := FileInfo{fileName, time.Time{}, git.Deleted}
+			changed = append(changed, fi)
+			continue
+		}
 		if err != nil {
 			return nil, err
 		}

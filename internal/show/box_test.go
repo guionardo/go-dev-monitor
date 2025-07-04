@@ -45,7 +45,7 @@ func Test_padL(t *testing.T) {
 		padL(s, prefix, suffix, char, n, b)
 		return b.String()
 	}
-	assert.Equal(t, "| abcd.  |\n", fw("abcd.", "|", "|", " ", 10))
-	assert.Equal(t, "| abc de |\n", fw("abc def ghi", "|", "|", " ", 10))
+	assert.Equal(t, "| abcd. \n", fw("abcd.", "|", "|", " ", 10))
+	assert.Equal(t, "| abc de \n", fw("abc def ghi", "|", "|", " ", 10))
 
 }

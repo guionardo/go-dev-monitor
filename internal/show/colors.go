@@ -9,17 +9,7 @@ import (
 )
 
 type (
-	Color       uint8
-	ColorString struct {
-		format      string
-		colorFormat string
-		args        []argColor
-	}
-	argColor struct {
-		arg    any
-		color  Color
-		format string
-	}
+	Color uint8
 )
 
 const (
@@ -42,7 +32,7 @@ var colorFuncs = map[Color]func(format string, args ...any) string{
 	Cyan:           color.CyanString,
 	Red:            color.RedString,
 	undefinedColor: fmt.Sprintf,
-	link:           consoleLink,
+	// link:           consoleLink,
 }
 
 func consoleLink(format string, args ...any) string {
@@ -54,98 +44,8 @@ func consoleLink(format string, args ...any) string {
 	return fmt.Sprintf(format, args...)
 }
 
-func (ac argColor) String() string {
-	return colorFuncs[ac.color](ac.format, ac.arg)
-}
-
-func (ac argColor) Raw() string {
-	return fmt.Sprintf(ac.format, ac.arg)
-}
-
 func (c Color) String() string {
 	return fmt.Sprintf("{COLOR:%d}", c)
-}
-
-func NewCS(format string, args ...any) *ColorString {
-	// Extract all format declarations
-	formats := make([]string, 0, len(args))
-	colorFormat := format
-	tmpFmt := format
-	nextFmtIndex := -1
-	for i, c := range tmpFmt {
-		if c == '%' {
-			nextFmtIndex = i + 1
-			continue
-		}
-		if nextFmtIndex > 0 {
-			formats = append(formats, tmpFmt[nextFmtIndex-1:nextFmtIndex+1])
-			colorFormat = colorFormat[0:nextFmtIndex] + "s" + colorFormat[nextFmtIndex+1:]
-			nextFmtIndex = -1
-		}
-	}
-	for len(tmpFmt) > 0 {
-		if p := strings.Index(tmpFmt, "%"); p >= 0 && p < len(tmpFmt)-1 {
-			formats = append(formats, tmpFmt[p:p+2])
-			tmpFmt = tmpFmt[p+1:]
-		} else {
-			tmpFmt = ""
-		}
-	}
-	var (
-		nArgs     = make([]argColor, 0, len(args))
-		lastColor = undefinedColor
-		lastArg   any
-	)
-
-	for _, arg := range args {
-		if color, ok := arg.(Color); ok {
-			if lastColor == undefinedColor {
-				lastColor = color
-			}
-		} else {
-			if lastArg == nil {
-				lastArg = arg
-			}
-		}
-		if lastColor != undefinedColor && lastArg != nil {
-			nArgs = append(nArgs, argColor{
-				arg:    lastArg,
-				color:  lastColor,
-				format: formats[len(nArgs)],
-			})
-			lastArg = nil
-			lastColor = undefinedColor
-		}
-	}
-	if lastArg != nil {
-		nArgs = append(nArgs, argColor{
-			arg:   lastArg,
-			color: undefinedColor,
-		})
-	}
-	cs := &ColorString{
-		format:      format,
-		colorFormat: colorFormat,
-		args:        nArgs,
-	}
-
-	return cs
-}
-
-func (cs *ColorString) String() string {
-	var args = make([]any, len(cs.args))
-	for i, arg := range cs.args {
-		args[i] = arg.String()
-	}
-	return fmt.Sprintf(cs.colorFormat, args...)
-}
-
-func (cs *ColorString) NoColor() string {
-	var args = make([]any, len(cs.args))
-	for i, arg := range cs.args {
-		args[i] = arg.arg
-	}
-	return fmt.Sprintf(cs.format, args...)
 }
 
 func colorPrefixSuffix(cf func(format string, args ...any) string) func() (prefix, suffix string) {

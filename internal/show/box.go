@@ -101,18 +101,17 @@ func breakLine(line string, maxLength int) iter.Seq[string] {
 	return func(yield func(string) bool) {
 		var currentLine string
 		for word := range strings.SplitSeq(line, " ") {
-			word = strings.TrimSpace(word)
 			if len(word)+len(currentLine) < maxLength {
 				currentLine += " " + word
 				continue
 			}
-			if !yield(strings.TrimSpace(currentLine)) {
+			if !yield(currentLine) {
 				return
 			}
 			currentLine = word
 		}
 		if len(currentLine) > 0 {
-			yield(strings.TrimSpace(currentLine))
+			yield(currentLine)
 		}
 	}
 }

@@ -8,15 +8,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewCS(t *testing.T) {
-	color.NoColor = false
-	cs := NewCS("Name: %s - Age: %d", Red, "Guionardo", Yellow, 48)
-	assert.NotNil(t, cs)
-	ss := cs.String()
-	fmt.Println(ss)
-	fmt.Println(cs.NoColor())
-}
-
 func Test_removeColors(t *testing.T) {
 	color.NoColor = false
 
