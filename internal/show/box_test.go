@@ -29,7 +29,7 @@ func Test_breakLine(t *testing.T) {
 	}
 
 	assert.Equal(t, []string{
-		"O rato roeu",
+		" O rato roeu",
 		"a roupa do",
 		"rei de Roma.",
 		"O rei, de",
