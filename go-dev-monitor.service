@@ -1,0 +1,9 @@
+[Unit]
+Description=go-dev-monitor service
+After=network-online.target
+
+[Service]
+ExecStart=/path/to/hit.sh
+
+[Install]
+WantedBy=multi-user.target
