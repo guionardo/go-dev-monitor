@@ -7,10 +7,48 @@ tasks:
       # - npm install -g npm@latest
       # - npm install -g @commitlint/cli @commitlint/config-conventional
       - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v2.2.1
+      - go install github.com/mailru/easyjson/...@latest
 
-
+  json:
+    desc: Build json marshalling functions - execute after update the models
+    cmds:
+      - easyjson -all internal/repository/repo.go
+      - easyjson -all internal/api/request_response.go
 
   cover:
+    desc: Run tests and coverage report
     cmds:
-      - go test -coverprofile=${TMPDIR}/c.out ./...
-      - go tool cover -html="${TMPDIR}/c.out"
+      - go test -coverprofile={{.TEMP}}/c.out ./...
+      # - go tool cover -html="{{.TEMP}}/c.out"
+
+  release-major:
+    desc: Update metadata file to increase major version
+    cmds:
+      - python3 .github/scripts/release.py major
+
+  release-minor:
+    desc: Update metadata file to increase minor version
+    cmds:
+      - python3 .github/scripts/release.py minor
+
+  build:
+    desc: Build gdm
+    cmds:
+      - go build -o gdm cmd/gdm/main.go
+
+  install-service:
+    desc: Create service file and install it in
+    deps: [build]
+    cmds:
+      - mv gdm {{.HOME}}/go/bin/gdm
+      - echo [Unit] > go-dev-monitor.service
+      - echo Description=go-dev-monitor service >> go-dev-monitor.service
+      - echo After=network-online.target >> go-dev-monitor.service
+      - echo [Service] >> go-dev-monitor.service
+      - echo Environment=HOME={{.HOME}} >> go-dev-monitor.service
+      - echo ExecStart={{.HOME}}/go/bin/gdm serve  >> go-dev-monitor.service
+      - echo [Install] >> go-dev-monitor.service
+      - echo WantedBy=multi-user.target >> go-dev-monitor.service
+      - sudo cp go-dev-monitor.service /etc/systemd/system/go-dev-monitor.service
+      - sudo systemctl daemon-reload
+      - echo Run service with systemctl start go-dev-monitor
