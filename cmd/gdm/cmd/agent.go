@@ -8,7 +8,7 @@ import (
 
 	"github.com/guionardo/go-dev-monitor/internal/agent"
 	"github.com/guionardo/go-dev-monitor/internal/config"
-	pathtools "github.com/guionardo/go-dev-monitor/internal/utils/path_tools"
+	pathtools "github.com/guionardo/go/pkg/path_tools"
 	"github.com/spf13/cobra"
 )
 

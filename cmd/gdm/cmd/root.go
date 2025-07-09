@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"log/slog"
 
 	"github.com/guionardo/go-dev-monitor/internal"
 	"github.com/guionardo/go-dev-monitor/internal/config"
@@ -25,6 +26,7 @@ var (
 			if dataFolder, err := cmd.Flags().GetString("data"); err == nil && len(dataFolder) > 0 {
 				config.SetConfigDir(dataFolder)
 			}
+			logging.Debug("Metadata version", slog.String("version", internal.Version))
 			return nil
 		},
 	}

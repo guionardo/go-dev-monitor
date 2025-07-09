@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/guionardo/go-dev-monitor/internal/show"
-	pathtools "github.com/guionardo/go-dev-monitor/internal/utils/path_tools"
+	pathtools "github.com/guionardo/go/pkg/path_tools"
 	"github.com/spf13/cobra"
 )
 

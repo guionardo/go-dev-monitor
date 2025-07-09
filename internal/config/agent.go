@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"slices"
 
-	pathtools "github.com/guionardo/go-dev-monitor/internal/utils/path_tools"
+	pathtools "github.com/guionardo/go/pkg/path_tools"
 )
 
 type Agent struct {

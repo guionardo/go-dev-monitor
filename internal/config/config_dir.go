@@ -6,7 +6,7 @@ import (
 	"path"
 	"sync"
 
-	pathtools "github.com/guionardo/go-dev-monitor/internal/utils/path_tools"
+	pathtools "github.com/guionardo/go/pkg/path_tools"
 )
 
 var (
